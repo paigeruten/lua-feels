@@ -4,6 +4,10 @@ What if programs made noise as they ran, giving you a feel for what's going on i
 
 This is a spinoff of https://github.com/paileyq/feels that will let you run a Lua REPL and visualize the Lua internals as it executes your code, all within the browser (thanks to WebAssembly).
 
+## Live demo
+
+https://paileyq.github.io/lua-feels/feels.html
+
 ## Usage
 
 Pre-requisites: `emscripten`, `make` (if you aren't editing the C code, these aren't required and you can skip step 1, as the build artifacts are included in this repo)
