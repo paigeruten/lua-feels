@@ -1,0 +1,30 @@
+diff -u original-src/lvm.c src/lvm.c
+--- original-src/lvm.c	2020-04-12 21:11:37.088992932 -0600
++++ src/lvm.c	2020-04-12 22:25:04.639038887 -0600
+@@ -9,6 +9,7 @@
+ 
+ #include "lprefix.h"
+ 
++#include <emscripten.h>
+ #include <float.h>
+ #include <limits.h>
+ #include <math.h>
+@@ -30,6 +31,7 @@
+ #include "ltm.h"
+ #include "lvm.h"
+ 
++#define LUA_USE_JUMPTABLE 0
+ 
+ /*
+ ** By default, use jump tables in the main interpreter loop on gcc
+@@ -1079,6 +1081,10 @@
+     Instruction i;  /* instruction being executed */
+     StkId ra;  /* instruction's A register */
+     vmfetch();
++    EM_ASM({
++      lua_event('opcode ' + $0);
++    }, GET_OPCODE(i));
++    emscripten_sleep(200);
+     lua_assert(base == ci->func + 1);
+     lua_assert(base <= L->top && L->top < L->stack + L->stacksize);
+     /* invalidate top for instructions not expecting it */
