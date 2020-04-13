@@ -3,18 +3,23 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
-int run_lua(const char* script) {
-	lua_State* lua = luaL_newstate();
-	luaL_openlibs(lua);
+lua_State* init_lua() {
+    lua_State* L = luaL_newstate();
+    luaL_openlibs(L);
+    return L;
+}
 
-	int res = luaL_dostring(lua, script);
+void free_lua(lua_State* L) {
+    lua_close(L);
+}
+
+int run_lua(lua_State* L, const char* script) {
+	int res = luaL_dostring(L, script);
 
 	size_t len = 0;
-	const char* value = lua_tolstring(lua, lua_gettop(lua), &len);
+	const char* value = lua_tolstring(L, lua_gettop(L), &len);
 
 	printf("%s\n", value);
-
-	lua_close(lua);
 
 	return 0;
 }

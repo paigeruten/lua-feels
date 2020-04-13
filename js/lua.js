@@ -31,5 +31,7 @@ function lua_event(event) {
 }
 
 function repl(code) {
-  Module.ccall("run_lua", 'number', ['string'], [code]);
+  var lua = Module.ccall("init_lua", 'number', [], []);
+  Module.ccall("run_lua", 'number', ['number', 'string'], [lua, code])
+    .then(() => Module.ccall("free_lua", 'void', ['number'], [lua]));
 }
