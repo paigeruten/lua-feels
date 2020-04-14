@@ -84,6 +84,9 @@ typedef LUAI_UACNUMBER l_uacNumber;
 typedef LUAI_UACINT l_uacInt;
 
 
+#undef NDEBUG
+#include <assert.h>
+#define lua_assert(c) assert(c)
 /* internal assertions for in-house debugging */
 #if defined(lua_assert)
 #define check_exp(c,e)		(lua_assert(c), (e))

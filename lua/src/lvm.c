@@ -9,7 +9,6 @@
 
 #include "lprefix.h"
 
-#include <emscripten.h>
 #include <float.h>
 #include <limits.h>
 #include <math.h>
@@ -1084,7 +1083,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
     EM_ASM({
       lua_event('opcode ' + $0);
     }, GET_OPCODE(i));
-    emscripten_sleep(200);
+    emscripten_sleep(100);
     lua_assert(base == ci->func + 1);
     lua_assert(base <= L->top && L->top < L->stack + L->stacksize);
     /* invalidate top for instructions not expecting it */

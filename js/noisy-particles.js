@@ -223,12 +223,18 @@ function opcodeToColor(opcode) {
   throw 'unreachable';
 }
 
-let octave = 4;
+let base_note = 48;
+
+lua_listen('lua', function (event) {
+  if (event.payload == 'start') {
+    base_note = 48;
+  }
+});
 
 lua_listen('opcode', function (event) {
   let opcode = OPCODES[event.payload];
   let opcodeCat = categorizeOpcode(opcode);
-  let midiValue = opcodeToNote(opcode) + octave*12;
+  let midiValue = opcodeToNote(opcode) + base_note;
   let freq = midiToFreq(midiValue);
   osc.freq(freq);
   env.play(osc, 0, 0.01);
@@ -236,9 +242,9 @@ lua_listen('opcode', function (event) {
   system.addParticle(opcode, opcodeToColor(opcode));
 
   if ((opcodeCat === 'call' && opcode !== 'TAILCALL') || opcode === 'VARARGPREP') {
-    octave++;
+    base_note += 5;
   } else if (opcodeCat === 'return') {
-    octave--;
+    base_note -= 5;
   }
 });
 
