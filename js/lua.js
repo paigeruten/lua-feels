@@ -1,11 +1,17 @@
 var Module = {
   print: function(text) {
     if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-    console.log(text);
+
+    const lineEl = document.createElement('div');
+    lineEl.textContent = text;
+    outputEl.appendChild(lineEl);
   },
   printErr: function(text) {
     if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-    console.error(text);
+
+    const lineEl = document.createElement('div');
+    lineEl.textContent = '[ERROR] ' + text;
+    outputEl.appendChild(lineEl);
   }
 };
 
@@ -49,5 +55,34 @@ function repl(code) {
     .then(() => lua_emit({ type: 'lua', payload: 'end' }));
 }
 
-lua_listen('result', e => console.log("Result: " + e.payload));
-lua_listen('error', e => console.log("Error: " + e.payload));
+const replEl = document.getElementById('repl');
+const replInputEl = document.getElementById('repl-input');
+const outputEl = document.getElementById('output');
+
+replEl.addEventListener('submit', event => {
+  event.preventDefault();
+
+  const code = replInputEl.value;
+
+  const lineEl = document.createElement('div');
+  lineEl.textContent = '>> ' + code;
+  outputEl.appendChild(lineEl);
+
+  repl(code);
+
+  replInputEl.value = '';
+  replInputEl.focus();
+});
+
+lua_listen('result', event => {
+  const lineEl = document.createElement('div');
+  lineEl.textContent = '=> ' + event.payload;
+  outputEl.appendChild(lineEl);
+});
+
+lua_listen('error', event => {
+  const lineEl = document.createElement('div');
+  lineEl.textContent = 'Error: ' + event.payload;
+  outputEl.appendChild(lineEl);
+});
+

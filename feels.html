@@ -9,7 +9,11 @@
   <body>
     <h1>lua-feels v0</h1>
 
-    <p>Open the console and run <code>repl('your lua code here')</code>!</p>
+    <div id="output" style="font-family: monospace; white-space: pre;"></div>
+
+    <form id="repl" style="margin-bottom: 1em;">
+      <input type="text" id="repl-input" autocomplete="off" />
+    </form>
 
     <script src="js/lua.js"></script>
     <script src="js/noisy-particles.js"></script>
