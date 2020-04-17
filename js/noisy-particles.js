@@ -248,8 +248,20 @@ lua_listen('opcode', function (event) {
   }
 });
 
+function setCanvasSize() {
+  var p5El = document.getElementById('p5');
+  resizeCanvas(p5El.clientWidth, p5El.clientHeight);
+}
+
+function windowResized() {
+  setCanvasSize();
+}
+
 function setup() {
-  createCanvas(720, 400);
+  var canvas = createCanvas(720, 400);
+  canvas.parent('p5');
+  setCanvasSize();
+
   system = new ParticleSystem(createVector(width / 2, 50));
 
   osc = new p5.SinOsc();
@@ -285,7 +297,7 @@ Particle.prototype.run = function() {
 Particle.prototype.update = function(){
   this.velocity.add(this.acceleration);
   this.position.add(this.velocity);
-  this.lifespan -= 2;
+  this.lifespan -= 1.5;
 };
 
 // Method to display

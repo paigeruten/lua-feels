@@ -14,4 +14,4 @@ Pre-requisites: `emscripten`, `make` (if you aren't editing the C code, these ar
 
 1. `cd lua/` and run `make`.
 2. Open `feels.html` in your browser (you will probably need to run a local http server).
-3. Type Lua code into REPL (UI coming soon, use the JS console for now...), and see nice sights and hear nice sounds in your browser as the code executes. :D
+3. Type Lua code into REPL, and see nice sights and hear nice sounds in your browser as the code executes. :D

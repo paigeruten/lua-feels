@@ -5,6 +5,7 @@ var Module = {
     const lineEl = document.createElement('div');
     lineEl.textContent = text;
     outputEl.appendChild(lineEl);
+    jumpToBottom();
   },
   printErr: function(text) {
     if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
@@ -12,6 +13,7 @@ var Module = {
     const lineEl = document.createElement('div');
     lineEl.textContent = '[ERROR] ' + text;
     outputEl.appendChild(lineEl);
+    jumpToBottom();
   }
 };
 
@@ -52,37 +54,78 @@ function repl(code) {
   }
   var cont = Module.ccall("run_lua", 'number', ['number', 'string'], [L, code]);
   Promise.resolve(cont)
-    .then(() => lua_emit({ type: 'lua', payload: 'end' }));
+    .then(() => {
+      replFormEl.classList.remove('inactive');
+      replInputEl.focus();
+
+      lua_emit({ type: 'lua', payload: 'end' });
+    });
+}
+
+function jumpToBottom() {
+  replEl.scrollTop = replEl.scrollHeight;
 }
 
 const replEl = document.getElementById('repl');
+const replFormEl = document.getElementById('repl-form');
 const replInputEl = document.getElementById('repl-input');
 const outputEl = document.getElementById('output');
 
-replEl.addEventListener('submit', event => {
+replFormEl.addEventListener('submit', event => {
   event.preventDefault();
 
   const code = replInputEl.value;
 
+  const promptEl = document.createElement('span');
+  promptEl.classList.add('prompt');
+  promptEl.textContent = '>> ';
+
+  const codeEl = document.createElement('span');
+  codeEl.classList.add('code');
+  codeEl.textContent = code;
+
   const lineEl = document.createElement('div');
-  lineEl.textContent = '>> ' + code;
+  lineEl.classList.add('line');
+  lineEl.appendChild(promptEl);
+  lineEl.appendChild(codeEl);
+
   outputEl.appendChild(lineEl);
+  jumpToBottom();
+
+  replFormEl.classList.add('inactive');
+  replInputEl.value = '';
 
   repl(code);
-
-  replInputEl.value = '';
-  replInputEl.focus();
 });
 
 lua_listen('result', event => {
+  const resultPromptEl = document.createElement('span');
+  resultPromptEl.classList.add('result-prompt');
+  resultPromptEl.textContent = '=> ';
+
+  const resultEl = document.createElement('span');
+  resultEl.classList.add('result');
+  resultEl.textContent = event.payload;
+
   const lineEl = document.createElement('div');
-  lineEl.textContent = '=> ' + event.payload;
+  lineEl.classList.add('line');
+  lineEl.appendChild(resultPromptEl);
+  lineEl.appendChild(resultEl);
+
   outputEl.appendChild(lineEl);
+  jumpToBottom();
 });
 
 lua_listen('error', event => {
+  const errorEl = document.createElement('span');
+  errorEl.classList.add('error');
+  errorEl.textContent = event.payload;
+
   const lineEl = document.createElement('div');
-  lineEl.textContent = 'Error: ' + event.payload;
+  lineEl.classList.add('line');
+  lineEl.appendChild(errorEl);
+
   outputEl.appendChild(lineEl);
+  jumpToBottom();
 });
 
