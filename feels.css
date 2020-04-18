@@ -29,6 +29,7 @@ body {
   font-family: monospace;
   font-size: 12pt;
   color: white;
+  cursor: text;
 }
 
 #settings {
@@ -60,6 +61,10 @@ body {
   font-family: inherit;
   font-size: inherit;
   color: inherit;
+}
+
+.line {
+  display: inline-block;
 }
 
 .prompt {

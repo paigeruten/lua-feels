@@ -4,6 +4,7 @@ var Module = {
 
     const lineEl = document.createElement('div');
     lineEl.textContent = text;
+    outputEl.appendChild(document.createElement('br'));
     outputEl.appendChild(lineEl);
     jumpToBottom();
   },
@@ -12,6 +13,7 @@ var Module = {
 
     const lineEl = document.createElement('div');
     lineEl.textContent = '[ERROR] ' + text;
+    outputEl.appendChild(document.createElement('br'));
     outputEl.appendChild(lineEl);
     jumpToBottom();
   }
@@ -77,6 +79,12 @@ const replFormEl = document.getElementById('repl-form');
 const replInputEl = document.getElementById('repl-input');
 const outputEl = document.getElementById('output');
 
+replEl.addEventListener('mousedown', event => {
+  if (event.target === replEl || event.target === outputEl) {
+    setTimeout(() => replInputEl.focus(), 0);
+  }
+});
+
 replFormEl.addEventListener('submit', event => {
   event.preventDefault();
 
@@ -95,6 +103,7 @@ replFormEl.addEventListener('submit', event => {
   lineEl.appendChild(promptEl);
   lineEl.appendChild(codeEl);
 
+  outputEl.appendChild(document.createElement('br'));
   outputEl.appendChild(lineEl);
   jumpToBottom();
 
@@ -118,6 +127,7 @@ lua_listen('result', event => {
   lineEl.appendChild(resultPromptEl);
   lineEl.appendChild(resultEl);
 
+  outputEl.appendChild(document.createElement('br'));
   outputEl.appendChild(lineEl);
   jumpToBottom();
 });
@@ -131,6 +141,7 @@ lua_listen('error', event => {
   lineEl.classList.add('line');
   lineEl.appendChild(errorEl);
 
+  outputEl.appendChild(document.createElement('br'));
   outputEl.appendChild(lineEl);
   jumpToBottom();
 });
