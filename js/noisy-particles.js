@@ -227,6 +227,7 @@ let base_note = 48;
 
 lua_listen('lua', function (event) {
   if (event.payload == 'start') {
+    startAudio();
     base_note = 48;
   }
 });
@@ -255,6 +256,16 @@ function setCanvasSize() {
 
 function windowResized() {
   setCanvasSize();
+}
+
+var audioStarted = false;
+function startAudio() {
+  if (!audioStarted) {
+    userStartAudio();
+    osc.start();
+
+    audioStarted = true;
+  }
 }
 
 function setup() {
