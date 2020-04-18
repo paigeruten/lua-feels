@@ -1083,10 +1083,13 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
 
     // ignore the VARARGPREP instruction that comes at the beginning of every bit of code ran by the REPL.
     if (!(ci->previous && ci->previous->previous == NULL && GET_OPCODE(i) == OP_VARARGPREP)) {
+      if (feels_opcode_count > 0) {
+        emscripten_sleep(feels_vm_delay);
+      }
       EM_ASM({
         lua_event('opcode ' + $0);
       }, GET_OPCODE(i));
-      emscripten_sleep(feels_vm_delay);
+      feels_opcode_count++;
     }
 
     lua_assert(base == ci->func + 1);

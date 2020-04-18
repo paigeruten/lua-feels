@@ -13,8 +13,8 @@ diff -u original-src/llimits.h src/llimits.h
  #define check_exp(c,e)		(lua_assert(c), (e))
 diff -u original-src/lua.h src/lua.h
 --- original-src/lua.h	2020-04-12 21:11:37.092326257 -0600
-+++ src/lua.h	2020-04-18 00:10:46.922492184 -0600
-@@ -9,12 +9,14 @@
++++ src/lua.h	2020-04-18 04:07:59.742585602 -0600
+@@ -9,12 +9,15 @@
  #ifndef lua_h
  #define lua_h
  
@@ -26,12 +26,13 @@ diff -u original-src/lua.h src/lua.h
  #include "luaconf.h"
  
 +extern unsigned int feels_vm_delay;
++extern int feels_opcode_count;
  
  #define LUA_VERSION_MAJOR	"5"
  #define LUA_VERSION_MINOR	"4"
 diff -u original-src/lvm.c src/lvm.c
 --- original-src/lvm.c	2020-04-12 21:11:37.088992932 -0600
-+++ src/lvm.c	2020-04-18 01:33:18.067821426 -0600
++++ src/lvm.c	2020-04-18 04:09:08.165813436 -0600
 @@ -30,6 +30,7 @@
  #include "ltm.h"
  #include "lvm.h"
@@ -40,17 +41,20 @@ diff -u original-src/lvm.c src/lvm.c
  
  /*
  ** By default, use jump tables in the main interpreter loop on gcc
-@@ -1079,6 +1080,15 @@
+@@ -1079,6 +1080,18 @@
      Instruction i;  /* instruction being executed */
      StkId ra;  /* instruction's A register */
      vmfetch();
 +
 +    // ignore the VARARGPREP instruction that comes at the beginning of every bit of code ran by the REPL.
 +    if (!(ci->previous && ci->previous->previous == NULL && GET_OPCODE(i) == OP_VARARGPREP)) {
++      if (feels_opcode_count > 0) {
++        emscripten_sleep(feels_vm_delay);
++      }
 +      EM_ASM({
 +        lua_event('opcode ' + $0);
 +      }, GET_OPCODE(i));
-+      emscripten_sleep(feels_vm_delay);
++      feels_opcode_count++;
 +    }
 +
      lua_assert(base == ci->func + 1);

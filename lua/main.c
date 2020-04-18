@@ -6,6 +6,7 @@
 #include <lualib.h>
 
 unsigned int feels_vm_delay = 100;
+int feels_opcode_count = 0;
 
 lua_State* init_lua() {
   lua_State* L = luaL_newstate();
@@ -22,6 +23,8 @@ void set_vm_delay(unsigned int milliseconds) {
 }
 
 int run_lua(lua_State* L, const char* code) {
+  feels_opcode_count = 0;
+
   lua_settop(L, 0);
 
   const char *retcode = lua_pushfstring(L, "return %s", code);
