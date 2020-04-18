@@ -3,86 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title>lua-feels v0</title>
+    <link href="feels.css" rel="stylesheet">
     <script src="js/p5/p5.min.js"></script>
     <script src="js/p5/p5.sound.min.js"></script>
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-
-      html, body {
-        height: 100%;
-      }
-
-      body {
-        margin: 0;
-        display: flex;
-      }
-
-      #p5 {
-        width: 60%;
-        height: 100%;
-      }
-
-      #repl {
-        width: 40%;
-        height: 100%;
-        overflow-y: scroll;
-        padding: 1em;
-        background-color: black;
-        font-family: monospace;
-        font-size: 12pt;
-        color: white;
-      }
-
-      #repl-form {
-        display: flex;
-        width: 100%;
-      }
-
-      #repl-form.inactive .prompt {
-        display: none;
-      }
-
-      #repl-input {
-        flex: 1;
-        border: none;
-        background: none;
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
-        padding: 0;
-        margin: 0;
-        font-family: inherit;
-        font-size: inherit;
-        color: inherit;
-      }
-
-      .prompt {
-        color: #999;
-      }
-
-      .result-prompt {
-        color: #6c6;
-      }
-
-      .code {
-        white-space: pre-wrap;
-      }
-
-      .result {
-        white-space: pre-wrap;
-      }
-
-      .error {
-        white-space: pre-wrap;
-        color: red;
-      }
-
-      .title {
-        font-weight: bold;
-      }
-    </style>
   </head>
   <body>
     <div id="p5"></div>
