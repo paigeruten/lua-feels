@@ -1080,10 +1080,15 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
     Instruction i;  /* instruction being executed */
     StkId ra;  /* instruction's A register */
     vmfetch();
-    EM_ASM({
-      lua_event('opcode ' + $0);
-    }, GET_OPCODE(i));
-    emscripten_sleep(feels_vm_delay);
+
+    // ignore the VARARGPREP instruction that comes at the beginning of every bit of code ran by the REPL.
+    if (!(ci->previous && ci->previous->previous == NULL && GET_OPCODE(i) == OP_VARARGPREP)) {
+      EM_ASM({
+        lua_event('opcode ' + $0);
+      }, GET_OPCODE(i));
+      emscripten_sleep(feels_vm_delay);
+    }
+
     lua_assert(base == ci->func + 1);
     lua_assert(base <= L->top && L->top < L->stack + L->stacksize);
     /* invalidate top for instructions not expecting it */

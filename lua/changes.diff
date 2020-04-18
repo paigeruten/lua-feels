@@ -31,7 +31,7 @@ diff -u original-src/lua.h src/lua.h
  #define LUA_VERSION_MINOR	"4"
 diff -u original-src/lvm.c src/lvm.c
 --- original-src/lvm.c	2020-04-12 21:11:37.088992932 -0600
-+++ src/lvm.c	2020-04-18 00:10:54.512746543 -0600
++++ src/lvm.c	2020-04-18 01:33:18.067821426 -0600
 @@ -30,6 +30,7 @@
  #include "ltm.h"
  #include "lvm.h"
@@ -40,14 +40,19 @@ diff -u original-src/lvm.c src/lvm.c
  
  /*
  ** By default, use jump tables in the main interpreter loop on gcc
-@@ -1079,6 +1080,10 @@
+@@ -1079,6 +1080,15 @@
      Instruction i;  /* instruction being executed */
      StkId ra;  /* instruction's A register */
      vmfetch();
-+    EM_ASM({
-+      lua_event('opcode ' + $0);
-+    }, GET_OPCODE(i));
-+    emscripten_sleep(feels_vm_delay);
++
++    // ignore the VARARGPREP instruction that comes at the beginning of every bit of code ran by the REPL.
++    if (!(ci->previous && ci->previous->previous == NULL && GET_OPCODE(i) == OP_VARARGPREP)) {
++      EM_ASM({
++        lua_event('opcode ' + $0);
++      }, GET_OPCODE(i));
++      emscripten_sleep(feels_vm_delay);
++    }
++
      lua_assert(base == ci->func + 1);
      lua_assert(base <= L->top && L->top < L->stack + L->stacksize);
      /* invalidate top for instructions not expecting it */

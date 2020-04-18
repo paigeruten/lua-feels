@@ -54,7 +54,7 @@ function repl(code) {
   if (!L) {
     L = Module.ccall("init_lua", 'number', [], []);
   }
-  var cont = Module.ccall("run_lua", 'number', ['number', 'string'], [L, code]);
+  var cont = Module.ccall("run_lua", 'number', ['number', 'string'], [L, code], { async: true });
   Promise.resolve(cont)
     .then(() => {
       replFormEl.classList.remove('inactive');
