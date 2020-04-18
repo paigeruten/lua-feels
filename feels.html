@@ -21,8 +21,19 @@
         </form>
       </div>
       <div id="settings">
-        <input type="range" id="speed-input" min="1" max="20" value="10" />
-        <label for="speed-input">VM speed: <strong><span id="current-speed">10</span>Hz</strong></label>
+        <div id="speed">
+          <input type="range" id="speed-input" min="1" max="20" value="10" />
+          <label for="speed-input">VM speed: <strong><span id="current-speed">10</span>Hz</strong></label>
+        </div>
+        <div id="examples">
+          <br>
+          <strong>Examples:</strong>
+          <button class="example" data-code="for i = 1,10 do print(i) end">loop</button>
+          <button class="example" data-code="function fac(n) if n <= 1 then return 1 else return n * fac(n-1) end end">factorial</button>
+          <button class="example" data-code="function fib(n) if n <= 1 then return 1 else return fib(n-1) + fib(n-2) end end">fibonacci</button>
+          <button class="example" data-code="function countdown(n) if n == 0 then print('BLASTOFF!') else print(n .. '...') return countdown(n-1) end end">countdown</button>
+          <button class="example" data-code="for i = 1,100 do if i % 15 == 0 then print('FIZZBUZZ') elseif i % 5 == 0 then print('BUZZ') elseif i % 3 == 0 then print('FIZZ') else print(i) end end">fizzbuzz</button>
+        </div>
       </div>
     </div>
 

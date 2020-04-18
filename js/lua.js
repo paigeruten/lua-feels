@@ -3,6 +3,7 @@ var Module = {
     if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
 
     const lineEl = document.createElement('div');
+    lineEl.classList.add('line');
     lineEl.textContent = text;
     outputEl.appendChild(document.createElement('br'));
     outputEl.appendChild(lineEl);
@@ -12,6 +13,7 @@ var Module = {
     if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
 
     const lineEl = document.createElement('div');
+    lineEl.classList.add('line');
     lineEl.textContent = '[ERROR] ' + text;
     outputEl.appendChild(document.createElement('br'));
     outputEl.appendChild(lineEl);
@@ -162,4 +164,15 @@ onRangeChange(speedInputEl, event => {
   setSpeed(delay);
 
   currentSpeedEl.textContent = speed;
+});
+
+const exampleClickHandler = event => {
+  replInputEl.value = event.currentTarget.dataset.code;
+  setTimeout(() => replInputEl.focus(), 0);
+};
+
+const examplesEl = document.getElementById('examples');
+const exampleElements = examplesEl.getElementsByClassName('example');
+Array.prototype.forEach.call(exampleElements, example => {
+  example.addEventListener('click', exampleClickHandler);
 });
