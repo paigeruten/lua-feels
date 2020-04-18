@@ -43,6 +43,7 @@ body {
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
+  outline: none;
   padding: 0;
   margin: 0;
   font-family: inherit;
