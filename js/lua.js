@@ -62,6 +62,12 @@ function repl(code) {
     });
 }
 
+var speed = 100;
+function setSpeed(milliseconds) {
+  speed = milliseconds;
+  Module.ccall("set_vm_delay", 'void', ['number'], [speed]);
+}
+
 function jumpToBottom() {
   replEl.scrollTop = replEl.scrollHeight;
 }
@@ -129,3 +135,20 @@ lua_listen('error', event => {
   jumpToBottom();
 });
 
+// https://stackoverflow.com/a/37623959
+function onRangeChange(r,f) {
+  var n,c,m;
+  r.addEventListener("input",function(e){n=1;c=e.target.value;if(c!=m)f(e);m=c;});
+  r.addEventListener("change",function(e){if(!n)f(e);});
+}
+
+const speedInputEl = document.getElementById('speed-input');
+const currentSpeedEl = document.getElementById('current-speed');
+
+onRangeChange(speedInputEl, event => {
+  var speed = parseInt(event.currentTarget.value);
+  var delay = floor(1000 / speed);
+  setSpeed(delay);
+
+  currentSpeedEl.textContent = speed;
+});

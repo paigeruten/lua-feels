@@ -5,6 +5,8 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+unsigned int feels_vm_delay = 100;
+
 lua_State* init_lua() {
   lua_State* L = luaL_newstate();
   luaL_openlibs(L);
@@ -13,6 +15,10 @@ lua_State* init_lua() {
 
 void free_lua(lua_State* L) {
   lua_close(L);
+}
+
+void set_vm_delay(unsigned int milliseconds) {
+  feels_vm_delay = milliseconds;
 }
 
 int run_lua(lua_State* L, const char* code) {

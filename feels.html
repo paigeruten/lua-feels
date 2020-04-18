@@ -9,15 +9,21 @@
   </head>
   <body>
     <div id="p5"></div>
-    <div id="repl">
-      <div id="output">
-        <div class="line title">lua-feels v0</div>
-      </div>
+    <div id="sidebar">
+      <div id="repl">
+        <div id="output">
+          <div class="line title">lua-feels v0</div>
+        </div>
 
-      <form id="repl-form">
-        <span class="prompt">&gt;&gt;&nbsp;</span>
-        <input type="text" id="repl-input" autocomplete="off" autofocus />
-      </form>
+        <form id="repl-form">
+          <span class="prompt">&gt;&gt;&nbsp;</span>
+          <input type="text" id="repl-input" autocomplete="off" autofocus />
+        </form>
+      </div>
+      <div id="settings">
+        <input type="range" id="speed-input" min="1" max="20" value="10" />
+        <label for="speed-input">VM speed (<span id="current-speed">10</span>Hz)</label>
+      </div>
     </div>
 
     <script src="js/lua.js"></script>

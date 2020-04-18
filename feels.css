@@ -16,14 +16,25 @@ body {
   height: 100%;
 }
 
-#repl {
+#sidebar {
   width: 40%;
   height: 100%;
+}
+
+#repl {
+  height: 70%;
   overflow-y: scroll;
   padding: 1em;
   background-color: black;
   font-family: monospace;
   font-size: 12pt;
+  color: white;
+}
+
+#settings {
+  height: 30%;
+  padding: 1em;
+  background-color: #200;
   color: white;
 }
 

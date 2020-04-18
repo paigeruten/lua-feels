@@ -1083,7 +1083,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
     EM_ASM({
       lua_event('opcode ' + $0);
     }, GET_OPCODE(i));
-    emscripten_sleep(100);
+    emscripten_sleep(feels_vm_delay);
     lua_assert(base == ci->func + 1);
     lua_assert(base <= L->top && L->top < L->stack + L->stacksize);
     /* invalidate top for instructions not expecting it */

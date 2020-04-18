@@ -13,8 +13,8 @@ diff -u original-src/llimits.h src/llimits.h
  #define check_exp(c,e)		(lua_assert(c), (e))
 diff -u original-src/lua.h src/lua.h
 --- original-src/lua.h	2020-04-12 21:11:37.092326257 -0600
-+++ src/lua.h	2020-04-13 19:39:13.665583049 -0600
-@@ -9,6 +9,7 @@
++++ src/lua.h	2020-04-18 00:10:46.922492184 -0600
+@@ -9,12 +9,14 @@
  #ifndef lua_h
  #define lua_h
  
@@ -22,9 +22,16 @@ diff -u original-src/lua.h src/lua.h
  #include <stdarg.h>
  #include <stddef.h>
  
+ 
+ #include "luaconf.h"
+ 
++extern unsigned int feels_vm_delay;
+ 
+ #define LUA_VERSION_MAJOR	"5"
+ #define LUA_VERSION_MINOR	"4"
 diff -u original-src/lvm.c src/lvm.c
 --- original-src/lvm.c	2020-04-12 21:11:37.088992932 -0600
-+++ src/lvm.c	2020-04-13 20:00:38.742964892 -0600
++++ src/lvm.c	2020-04-18 00:10:54.512746543 -0600
 @@ -30,6 +30,7 @@
  #include "ltm.h"
  #include "lvm.h"
@@ -40,7 +47,7 @@ diff -u original-src/lvm.c src/lvm.c
 +    EM_ASM({
 +      lua_event('opcode ' + $0);
 +    }, GET_OPCODE(i));
-+    emscripten_sleep(100);
++    emscripten_sleep(feels_vm_delay);
      lua_assert(base == ci->func + 1);
      lua_assert(base <= L->top && L->top < L->stack + L->stacksize);
      /* invalidate top for instructions not expecting it */
