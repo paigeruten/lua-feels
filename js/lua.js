@@ -112,7 +112,34 @@ replFormEl.addEventListener('submit', event => {
   replFormEl.classList.add('inactive');
   replInputEl.value = '';
 
+  replHistory.push(code);
+  replHistoryIndex = replHistory.length;
+
   repl(code);
+});
+
+var replHistory = [];
+var replHistoryIndex = 0;
+
+replInputEl.addEventListener('keydown', event => {
+  if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+    event.preventDefault();
+
+    if (event.key === 'ArrowUp') {
+      replHistoryIndex--;
+    } else {
+      replHistoryIndex++;
+    }
+
+    if (replHistoryIndex < 0) {
+      replHistoryIndex = 0;
+    } else if (replHistoryIndex >= replHistory.length) {
+      replHistoryIndex = replHistory.length;
+      replInputEl.value = '';
+    } else {
+      replInputEl.value = replHistory[replHistoryIndex];
+    }
+  }
 });
 
 lua_listen('result', event => {
