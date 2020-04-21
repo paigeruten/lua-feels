@@ -224,16 +224,24 @@ function opcodeToColor(opcode) {
 }
 
 let base_note = 48;
+let opcode_tally = {};
 
 lua_listen('lua', function (event) {
   if (event.payload == 'start') {
     startAudio();
     base_note = 48;
+    opcode_tally = {};
   }
 });
 
 lua_listen('opcode', function (event) {
   let opcode = OPCODES[event.payload];
+
+  if (opcode_tally[opcode] === undefined) {
+    opcode_tally[opcode] = 0;
+  }
+  opcode_tally[opcode]++;
+
   let opcodeCat = categorizeOpcode(opcode);
   let midiValue = opcodeToNote(opcode) + base_note;
   let freq = midiToFreq(midiValue);
@@ -287,6 +295,28 @@ function setup() {
 function draw() {
   background(51);
   system.run();
+
+  let tally_y = 25;
+  Object.entries(opcode_tally)
+    .sort((a, b) => a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : 0)
+    .forEach(entry => {
+      const opcode = entry[0];
+      const count = entry[1];
+      const opcodeCat = categorizeOpcode(opcode);
+      const color = opcodeToColor(opcode);
+
+      stroke(200);
+      strokeWeight(2);
+      fill(color.r, color.g, color.b);
+      ellipse(15, tally_y, 12, 12);
+
+      noStroke();
+      fill(200);
+      textSize(10);
+      text(opcode + ' (x' + count + ')', 25, tally_y + 4);
+
+      tally_y += 20;
+    });
 }
 
 // mostly copied from https://p5js.org/examples/simulate-particle-system.html
