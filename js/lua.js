@@ -39,7 +39,10 @@ function lua_emit(event) {
 function lua_event(event) {
   var matches;
   if (matches = event.match(/^opcode (\d+)$/)) {
-    lua_emit({ type: 'opcode', payload: parseInt(matches[1]) });
+    lua_emit({ type: 'opcode', payload: { opcode: parseInt(matches[1]) } });
+  } else if (matches = event.match(/^opcode (\d+) (\d+) (\d+)$/)) {
+    console.log(event);
+    lua_emit({ type: 'opcode', payload: { opcode: parseInt(matches[1]), args: [parseInt(matches[2]), parseInt(matches[3])] } });
   } else if (matches = event.match(/^result ([\s\S]*)$/)) {
     lua_emit({ type: 'result', payload: matches[1] });
   } else if (matches = event.match(/^error ([\s\S]*)$/)) {

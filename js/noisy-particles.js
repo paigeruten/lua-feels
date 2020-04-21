@@ -235,7 +235,7 @@ lua_listen('lua', function (event) {
 });
 
 lua_listen('opcode', function (event) {
-  let opcode = OPCODES[event.payload];
+  let opcode = OPCODES[event.payload.opcode];
 
   if (opcode_tally[opcode] === undefined) {
     opcode_tally[opcode] = 0;
@@ -248,7 +248,12 @@ lua_listen('opcode', function (event) {
   osc.freq(freq);
   env.play(osc, 0, 0.01);
 
-  system.addParticle(opcode, opcodeToColor(opcode));
+  let label = opcode;
+  if (event.payload.args) {
+    label += ' ' + event.payload.args[0] + ' + ' + event.payload.args[1];
+  }
+
+  system.addParticle(label, opcodeToColor(opcode));
 
   if ((opcodeCat === 'call' && opcode !== 'TAILCALL') || opcode === 'VARARGPREP') {
     base_note += 5;

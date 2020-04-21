@@ -1086,9 +1086,25 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
       if (feels_opcode_count > 0) {
         emscripten_sleep(feels_vm_delay);
       }
-      EM_ASM({
-        lua_event('opcode ' + $0);
-      }, GET_OPCODE(i));
+      OpCode opcode = GET_OPCODE(i);
+      if (opcode == OP_ADD) {
+        TValue *v1 = vRB(i);
+        TValue *v2 = vRC(i);
+        if (ttisinteger(v1) && ttisinteger(v2)) {
+          lua_Integer i1 = ivalue(v1); lua_Integer i2 = ivalue(v2);
+          EM_ASM({
+            lua_event('opcode ' + $0 + ' ' + $1 + ' ' + $2);
+          }, (int32_t)opcode, (int32_t)i1, (int32_t)i2);
+        } else {
+          EM_ASM({
+            lua_event('opcode ' + $0);
+          }, (int32_t)opcode);
+        }
+      } else {
+        EM_ASM({
+          lua_event('opcode ' + $0);
+        }, (int32_t)opcode);
+      }
       feels_opcode_count++;
     }
 
