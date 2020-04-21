@@ -187,10 +187,16 @@ const currentSpeedEl = document.getElementById('current-speed');
 
 onRangeChange(speedInputEl, event => {
   var speed = parseInt(event.currentTarget.value);
-  var delay = floor(1000 / speed);
-  setSpeed(delay);
 
-  currentSpeedEl.textContent = speed;
+  if (speed == 21) {
+    setSpeed(0);
+    currentSpeedEl.textContent = '∞';
+  } else {
+    var delay = floor(1000 / speed);
+    setSpeed(delay);
+
+    currentSpeedEl.textContent = speed;
+  }
 });
 
 const exampleClickHandler = event => {
