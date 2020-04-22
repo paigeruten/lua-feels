@@ -22,7 +22,7 @@
       </div>
       <div id="settings">
         <div id="speed">
-          <input type="range" id="speed-input" min="1" max="21" value="10" />
+          <input type="range" id="speed-input" min="1" max="21" value="10" autocomplete="off" />
           <label for="speed-input">VM speed: <strong><span id="current-speed">10</span>Hz</strong></label>
         </div>
         <div id="examples">
@@ -34,6 +34,12 @@
           <button class="example" data-code="function countdown(n) if n == 0 then print('BLASTOFF!') else print(n .. '...') return countdown(n-1) end end">countdown</button>
           <button class="example" data-code="for i = 1,100 do if i % 15 == 0 then print('FIZZBUZZ') elseif i % 5 == 0 then print('BUZZ') elseif i % 3 == 0 then print('FIZZ') else print(i) end end">fizzbuzz</button>
         </div>
+        <div id="music-settings">
+          <br>
+          <strong>𝅘𝅥𝅮𝅘𝅥𝅮 Settings 𝅘𝅥𝅮𝅘𝅥𝅮</strong><br>
+          <input type="range" id="recursion-go-up" min="0" max="12" value="0" autocomplete="off" /> Recursion go up: <strong><span id="recursion-go-up-value">Off</span></strong>
+        </div>
+      </div>
       </div>
     </div>
 

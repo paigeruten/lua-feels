@@ -224,12 +224,13 @@ function opcodeToColor(opcode) {
 }
 
 let base_note = 48;
+let recursionGoUp = 0;
 let opcode_tally = {};
 
 lua_listen('lua', function (event) {
   if (event.payload == 'start') {
     startAudio();
-    base_note = 48;
+    base_note = recursionGoUp ? 48 : 60;
     opcode_tally = {};
   }
 });
@@ -256,9 +257,26 @@ lua_listen('opcode', function (event) {
   system.addParticle(label, opcodeToColor(opcode));
 
   if ((opcodeCat === 'call' && opcode !== 'TAILCALL') || opcode === 'VARARGPREP') {
-    base_note += 5;
+    base_note += recursionGoUp;
   } else if (opcodeCat === 'return') {
-    base_note -= 5;
+    base_note -= recursionGoUp;
+  }
+});
+
+const recursionGoUpInputEl = document.getElementById('recursion-go-up');
+const recursionGoUpValueEl = document.getElementById('recursion-go-up-value');
+
+onRangeChange(recursionGoUpInputEl, event => {
+  recursionGoUp = parseInt(event.currentTarget.value);
+
+  if (recursionGoUp == 0) {
+    recursionGoUpValueEl.textContent = 'Off';
+  } else if (recursionGoUp == 1) {
+    recursionGoUpValueEl.textContent = '1 note'
+  } else if (recursionGoUp == 12) {
+    recursionGoUpValueEl.textContent = '1 octave'
+  } else {
+    recursionGoUpValueEl.textContent = recursionGoUp + ' notes';
   }
 });
 
