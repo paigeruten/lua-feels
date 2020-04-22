@@ -319,9 +319,8 @@ function draw() {
   background(51);
   system.run();
 
-  let tally_y = 25;
+  let tally_y = 23;
   Object.entries(opcode_tally)
-    .sort((a, b) => a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : 0)
     .forEach(entry => {
       const opcode = entry[0];
       const count = entry[1];
@@ -329,16 +328,16 @@ function draw() {
       const color = opcodeToColor(opcode);
 
       stroke(200);
-      strokeWeight(2);
+      strokeWeight(2.5);
       fill(color.r, color.g, color.b);
-      ellipse(15, tally_y, 12, 12);
+      ellipse(20, tally_y, 15, 15);
 
       noStroke();
       fill(200);
-      textSize(10);
-      text(opcode + ' (x' + count + ')', 25, tally_y + 4);
+      textSize(12);
+      text(opcode + ' (x' + count + ')', 32, tally_y + 4);
 
-      tally_y += 20;
+      tally_y += 23;
     });
 }
 
@@ -367,14 +366,14 @@ Particle.prototype.update = function(){
 // Method to display
 Particle.prototype.display = function() {
   stroke(200, this.lifespan);
-  strokeWeight(2);
+  strokeWeight(3);
   fill(this.color.r, this.color.g, this.color.b, this.lifespan);
-  ellipse(this.position.x, this.position.y, 12, 12);
+  ellipse(this.position.x, this.position.y, 18, 18);
 
   noStroke();
   fill(200, this.lifespan);
-  textSize(10);
-  text(this.label, this.position.x + 10, this.position.y + 4);
+  textSize(14);
+  text(this.label, this.position.x + 16, this.position.y + 5);
 };
 
 // Is the particle still useful?
