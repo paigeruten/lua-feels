@@ -25,7 +25,9 @@ var lua_listeners = {
   lua: [],
   result: [],
   error: [],
-  opcode: []
+  opcode: [],
+  enter: [],
+  leave: []
 };
 
 function lua_listen(event_type, handler) {
@@ -47,6 +49,10 @@ function lua_event(event) {
     lua_emit({ type: 'result', payload: matches[1] });
   } else if (matches = event.match(/^error ([\s\S]*)$/)) {
     lua_emit({ type: 'error', payload: matches[1] });
+  } else if (matches = event.match(/^enter$/)) {
+    lua_emit({ type: 'enter', payload: null });
+  } else if (matches = event.match(/^leave$/)) {
+    lua_emit({ type: 'leave', payload: null });
   } else {
     console.error('Unexpected lua event: "' + event + '"');
   }

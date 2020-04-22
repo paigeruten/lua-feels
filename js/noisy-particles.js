@@ -255,13 +255,10 @@ lua_listen('opcode', function (event) {
   }
 
   system.addParticle(label, opcodeToColor(opcode));
-
-  if ((opcodeCat === 'call' && opcode !== 'TAILCALL') || opcode === 'VARARGPREP') {
-    base_note += recursionGoUp;
-  } else if (opcodeCat === 'return') {
-    base_note -= recursionGoUp;
-  }
 });
+
+lua_listen('enter', () => base_note += recursionGoUp);
+lua_listen('leave', () => base_note -= recursionGoUp);
 
 const recursionGoUpInputEl = document.getElementById('recursion-go-up');
 const recursionGoUpValueEl = document.getElementById('recursion-go-up-value');

@@ -1062,6 +1062,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
 #if LUA_USE_JUMPTABLE
 #include "ljumptab.h"
 #endif
+  EM_ASM({ lua_event('enter'); });
  tailcall:
   trap = L->hookmask;
   cl = clLvalue(s2v(ci->func));
@@ -1614,6 +1615,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
           ci->func -= ci->u.l.nextraargs + nparams1;
         L->top = ra + n;  /* set call for 'luaD_poscall' */
         luaD_poscall(L, ci, n);
+        EM_ASM({ lua_event('leave'); });
         return;
       }
       vmcase(OP_RETURN0) {
@@ -1628,6 +1630,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
           while (nres-- > 0)
             setnilvalue(s2v(L->top++));  /* all results are nil */
         }
+        EM_ASM({ lua_event('leave'); });
         return;
       }
       vmcase(OP_RETURN1) {
@@ -1647,6 +1650,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
               setnilvalue(s2v(L->top++));
           }
         }
+        EM_ASM({ lua_event('leave'); });
         return;
       }
       vmcase(OP_FORLOOP) {

@@ -32,7 +32,7 @@ diff -u original-src/lua.h src/lua.h
  #define LUA_VERSION_MINOR	"4"
 diff -u original-src/lvm.c src/lvm.c
 --- original-src/lvm.c	2020-04-12 21:11:37.088992932 -0600
-+++ src/lvm.c	2020-04-20 23:44:35.768263719 -0600
++++ src/lvm.c	2020-04-21 22:02:18.334365880 -0600
 @@ -30,6 +30,7 @@
  #include "ltm.h"
  #include "lvm.h"
@@ -41,7 +41,15 @@ diff -u original-src/lvm.c src/lvm.c
  
  /*
  ** By default, use jump tables in the main interpreter loop on gcc
-@@ -1079,6 +1080,34 @@
+@@ -1061,6 +1062,7 @@
+ #if LUA_USE_JUMPTABLE
+ #include "ljumptab.h"
+ #endif
++  EM_ASM({ lua_event('enter'); });
+  tailcall:
+   trap = L->hookmask;
+   cl = clLvalue(s2v(ci->func));
+@@ -1079,6 +1081,34 @@
      Instruction i;  /* instruction being executed */
      StkId ra;  /* instruction's A register */
      vmfetch();
@@ -76,3 +84,27 @@ diff -u original-src/lvm.c src/lvm.c
      lua_assert(base == ci->func + 1);
      lua_assert(base <= L->top && L->top < L->stack + L->stacksize);
      /* invalidate top for instructions not expecting it */
+@@ -1585,6 +1615,7 @@
+           ci->func -= ci->u.l.nextraargs + nparams1;
+         L->top = ra + n;  /* set call for 'luaD_poscall' */
+         luaD_poscall(L, ci, n);
++        EM_ASM({ lua_event('leave'); });
+         return;
+       }
+       vmcase(OP_RETURN0) {
+@@ -1599,6 +1630,7 @@
+           while (nres-- > 0)
+             setnilvalue(s2v(L->top++));  /* all results are nil */
+         }
++        EM_ASM({ lua_event('leave'); });
+         return;
+       }
+       vmcase(OP_RETURN1) {
+@@ -1618,6 +1650,7 @@
+               setnilvalue(s2v(L->top++));
+           }
+         }
++        EM_ASM({ lua_event('leave'); });
+         return;
+       }
+       vmcase(OP_FORLOOP) {
