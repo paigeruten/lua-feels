@@ -1,4 +1,4 @@
-let system, osc, env;
+let system, osc, env, noise, noiseEnv;
 
 const OPCODES = [
   'MOVE',
@@ -249,6 +249,10 @@ lua_listen('opcode', function (event) {
   osc.freq(freq);
   env.play(osc, 0, 0.01);
 
+  if (opcodeCat === 'jump') {
+    if (loopDrum) noiseEnv.play(noise);
+  }
+
   let label = opcode;
   if (event.payload.args) {
     label += ' ' + event.payload.args[0] + ' + ' + event.payload.args[1];
@@ -257,7 +261,20 @@ lua_listen('opcode', function (event) {
   system.addParticle(label, opcodeToColor(opcode));
 });
 
-lua_listen('enter', () => base_note += recursionGoUp);
+let initiallyEntered = false;
+lua_listen('lua', (event) => {
+  if (event.payload === 'start') {
+    initiallyEntered = false;
+  }
+});
+lua_listen('enter', () => {
+  if (initiallyEntered) {
+    if (callDrum) noiseEnv.play(noise);
+  } else {
+    initiallyEntered = true;
+  }
+  base_note += recursionGoUp;
+});
 lua_listen('leave', () => base_note -= recursionGoUp);
 
 const recursionGoUpInputEl = document.getElementById('recursion-go-up');
@@ -275,6 +292,16 @@ onRangeChange(recursionGoUpInputEl, event => {
   } else {
     recursionGoUpValueEl.textContent = recursionGoUp + ' notes';
   }
+});
+
+let loopDrum = true;
+let callDrum = true;
+
+document.getElementById('loop-drum').addEventListener('change', event => {
+  loopDrum = event.currentTarget.checked;
+});
+document.getElementById('call-drum').addEventListener('change', event => {
+  callDrum = event.currentTarget.checked;
 });
 
 function setCanvasSize() {
@@ -303,13 +330,21 @@ function setup() {
 
   system = new ParticleSystem(createVector(width / 2, 50));
 
-  osc = new p5.SinOsc();
+  osc = new p5.SawOsc();
   osc.amp(0);
   osc.start();
 
   env = new p5.Env();
   env.setADSR(0.001, 0.5, 0.01, 0.5);
   env.setRange(1, 0);
+
+  noise = new p5.Noise();
+  noise.amp(0);
+  noise.start();
+
+  noiseEnv = new p5.Env();
+  noiseEnv.setADSR(0.001, 0.1, 0.2, 0.1);
+  noiseEnv.setRange(1, 0);
 }
 
 function draw() {
