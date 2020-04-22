@@ -335,7 +335,7 @@ function setup() {
   osc.start();
 
   env = new p5.Env();
-  env.setADSR(0.001, 0.5, 0.01, 0.5);
+  env.setADSR(0.001, 0.3, 0.01, 0.5);
   env.setRange(1, 0);
 
   noise = new p5.Noise();
@@ -345,6 +345,17 @@ function setup() {
   noiseEnv = new p5.Env();
   noiseEnv.setADSR(0.001, 0.1, 0.2, 0.1);
   noiseEnv.setRange(1, 0);
+
+  /*osc.disconnect();
+  noise.disconnect();
+  var reverb = new p5.Reverb();
+  reverb.process(osc, 0.1, 0.3);
+  reverb.process(noise, 0.1, 0.3);
+  reverb.amp(4);
+
+  reverb.disconnect();
+  var delay = new p5.Delay();
+  delay.process(reverb, 0.5, 0.7, 3000);*/
 }
 
 function draw() {
