@@ -22,7 +22,7 @@ body {
 }
 
 #repl {
-  height: 70%;
+  height: 65%;
   overflow-y: scroll;
   padding: 1em;
   background-color: black;
@@ -33,7 +33,7 @@ body {
 }
 
 #settings {
-  height: 30%;
+  height: 35%;
   padding: 1em;
   background-color: #044;
   color: white;

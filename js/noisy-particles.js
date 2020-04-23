@@ -323,6 +323,7 @@ function startAudio() {
   }
 }
 
+var reverb, delay;
 function setup() {
   var canvas = createCanvas(720, 400);
   canvas.parent('p5');
@@ -346,17 +347,43 @@ function setup() {
   noiseEnv.setADSR(0.001, 0.1, 0.2, 0.1);
   noiseEnv.setRange(1, 0);
 
-  /*osc.disconnect();
-  noise.disconnect();
-  var reverb = new p5.Reverb();
+  reverb = new p5.Reverb();
   reverb.process(osc, 0.1, 0.3);
   reverb.process(noise, 0.1, 0.3);
   reverb.amp(4);
-
   reverb.disconnect();
-  var delay = new p5.Delay();
-  delay.process(reverb, 0.5, 0.7, 3000);*/
+
+  delay = new p5.Delay();
+  delay.process(reverb, 0.5, 0.7, 3000);
+  delay.disconnect();
 }
+
+function echoOn() {
+  osc.disconnect();
+  noise.disconnect();
+
+  osc.connect(reverb);
+  noise.connect(reverb);
+
+  delay.connect(soundOut);
+}
+
+function echoOff() {
+  delay.disconnect();
+
+  osc.connect(soundOut);
+  noise.connect(soundOut);
+}
+
+let  = true;
+
+document.getElementById('echo').addEventListener('change', event => {
+  if (event.currentTarget.checked) {
+    echoOn();
+  } else {
+    echoOff();
+  }
+});
 
 function draw() {
   background(51);
