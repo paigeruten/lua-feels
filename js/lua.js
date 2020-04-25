@@ -96,8 +96,22 @@ replEl.addEventListener('mousedown', event => {
   }
 });
 
+let luaRunning = false;
+lua_listen('lua', event => {
+  if (event.payload === 'start') {
+    luaRunning = true;
+  } else if (event.payload === 'end') {
+    luaRunning = false;
+  }
+});
+
 replFormEl.addEventListener('submit', event => {
   event.preventDefault();
+
+  if (luaRunning) {
+    console.warn('tried to submit repl form while code is running');
+    return;
+  }
 
   const code = replInputEl.value;
 

@@ -4,8 +4,9 @@
     <meta charset="utf-8">
     <title>lua-feels v0</title>
     <link href="feels.css" rel="stylesheet">
-    <script src="js/p5/p5.min.js"></script>
-    <script src="js/p5/p5.sound.min.js"></script>
+    <script src="js/vendor/p5.min.js"></script>
+    <!--<script src="js/vendor/p5.sound.min.js"></script>-->
+    <script src="js/vendor/Tone.js"></script>
   </head>
   <body>
     <div id="p5"></div>
@@ -33,6 +34,7 @@
           <button class="example" data-code="function fib(n) if n <= 1 then return 1 else return fib(n-1) + fib(n-2) end end">fibonacci</button>
           <button class="example" data-code="function countdown(n) if n == 0 then print('BLASTOFF!') else print(n .. '...') return countdown(n-1) end end">countdown</button>
           <button class="example" data-code="for i = 1,100 do if i % 15 == 0 then print('FIZZBUZZ') elseif i % 5 == 0 then print('BUZZ') elseif i % 3 == 0 then print('FIZZ') else print(i) end end">fizzbuzz</button>
+          <button class="example" data-code="function binsearch(ary, x) local left = 1 local right = #ary while left <= right do local middle = math.floor((left + right) / 2) if ary[middle] == x then return middle elseif ary[middle] < x then left = middle + 1 else right = middle - 1 end end return nil end">binsearch</button>
         </div>
         <div id="music-settings">
           <br>

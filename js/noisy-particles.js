@@ -1,4 +1,4 @@
-let system, osc, env, noise, noiseEnv;
+let system, synth;
 
 const OPCODES = [
   'MOVE',
@@ -245,12 +245,10 @@ lua_listen('opcode', function (event) {
 
   let opcodeCat = categorizeOpcode(opcode);
   let midiValue = opcodeToNote(opcode) + base_note;
-  let freq = midiToFreq(midiValue);
-  osc.freq(freq);
-  env.play(osc, 0, 0.01);
+  synth.triggerAttackRelease(Tone.Midi(midiValue), 0.5, '+0.05');
 
   if (opcodeCat === 'jump') {
-    if (loopDrum) noiseEnv.play(noise);
+    //if (loopDrum) TODO
   }
 
   let label = opcode;
@@ -269,7 +267,7 @@ lua_listen('lua', (event) => {
 });
 lua_listen('enter', () => {
   if (initiallyEntered) {
-    if (callDrum) noiseEnv.play(noise);
+    //if (callDrum) TODO
   } else {
     initiallyEntered = true;
   }
@@ -316,14 +314,11 @@ function windowResized() {
 var audioStarted = false;
 function startAudio() {
   if (!audioStarted) {
-    userStartAudio();
-    osc.start();
-
+    Tone.start();
     audioStarted = true;
   }
 }
 
-var reverb, delay;
 function setup() {
   var canvas = createCanvas(720, 400);
   canvas.parent('p5');
@@ -331,51 +326,32 @@ function setup() {
 
   system = new ParticleSystem(createVector(width / 2, 50));
 
-  osc = new p5.SawOsc();
-  osc.amp(0);
-  osc.start();
+  synth = new Tone.Synth({
+    oscillator: {
+      type: "fatsawtooth",
+      detune: 0,
+      count: 2
+    },
+    envelope: {
+      attack: 0.02,
+      decay: 0.3,
+      sustain: 0,
+      release: 0.2
+    }
+  });
 
-  env = new p5.Env();
-  env.setADSR(0.001, 0.3, 0.01, 0.5);
-  env.setRange(1, 0);
+  var freeverb = new Tone.Freeverb();
+  var filter = new Tone.Filter(100, "highpass");
+  var pan = new Tone.Panner(0.5);
 
-  noise = new p5.Noise();
-  noise.amp(0);
-  noise.start();
-
-  noiseEnv = new p5.Env();
-  noiseEnv.setADSR(0.001, 0.1, 0.2, 0.1);
-  noiseEnv.setRange(1, 0);
-
-  reverb = new p5.Reverb();
-  reverb.process(osc, 0.1, 0.3);
-  reverb.process(noise, 0.1, 0.3);
-  reverb.amp(4);
-  reverb.disconnect();
-
-  delay = new p5.Delay();
-  delay.process(reverb, 0.5, 0.7, 3000);
-  delay.disconnect();
+  synth.chain(filter, freeverb, pan, Tone.Master);
 }
 
 function echoOn() {
-  osc.disconnect();
-  noise.disconnect();
-
-  osc.connect(reverb);
-  noise.connect(reverb);
-
-  delay.connect(soundOut);
 }
 
 function echoOff() {
-  delay.disconnect();
-
-  osc.connect(soundOut);
-  noise.connect(soundOut);
 }
-
-let  = true;
 
 document.getElementById('echo').addEventListener('change', event => {
   if (event.currentTarget.checked) {
