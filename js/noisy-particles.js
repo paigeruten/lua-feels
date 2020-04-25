@@ -253,8 +253,20 @@ lua_listen('opcode', function (event) {
   }
 
   let label = opcode;
-  if (event.payload.args) {
-    label += ' ' + event.payload.args[0] + ' + ' + event.payload.args[1];
+  if (opcode === 'RETURN') {
+    if (event.payload.args[0] > 0 && event.payload.args.length == 2) {
+      label += ': ' + event.payload.args[1];
+      if (event.payload.args[0] > 1) {
+        label += ', ...';
+      }
+    }
+  } else if (event.payload.args) {
+    label += ': ' + event.payload.args[0];
+
+    if (event.payload.args.length == 2) {
+      const sym = {ADD: '+', SUB: '-', MUL: '*'}[opcode];
+      label += ' ' + sym + ' ' + event.payload.args[1];
+    }
   }
 
   system.addParticle(label, opcodeToColor(opcode));

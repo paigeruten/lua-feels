@@ -1088,7 +1088,7 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
         emscripten_sleep(feels_vm_delay);
       }
       OpCode opcode = GET_OPCODE(i);
-      if (opcode == OP_ADD) {
+      if (opcode == OP_ADD || opcode == OP_SUB || opcode == OP_MUL) {
         TValue *v1 = vRB(i);
         TValue *v2 = vRC(i);
         if (ttisinteger(v1) && ttisinteger(v2)) {
@@ -1100,6 +1100,30 @@ void luaV_execute (lua_State *L, CallInfo *ci) {
           EM_ASM({
             lua_event('opcode ' + $0);
           }, (int32_t)opcode);
+        }
+      } else if (opcode == OP_RETURN1) {
+        TValue *v1 = s2v(ra);
+        if (ttisinteger(v1)) {
+          lua_Integer i1 = ivalue(v1);
+          EM_ASM({
+            lua_event('opcode ' + $0 + ' ' + $1);
+          }, (int32_t)opcode, (int32_t)i1);
+        } else {
+          EM_ASM({
+            lua_event('opcode ' + $0);
+          }, (int32_t)opcode);
+        }
+      } else if (opcode == OP_RETURN) {
+        int n = GETARG_B(i) - 1;  /* number of results */
+        if (n > 0 && ttisinteger(s2v(ra))) {
+          lua_Integer i1 = ivalue(s2v(ra));
+          EM_ASM({
+            lua_event('opcode ' + $0 + ' ' + $1 + ' ' + $2);
+          }, (int32_t)opcode, (int32_t)n, (int32_t)i1);
+        } else {
+          EM_ASM({
+            lua_event('opcode ' + $0 + ' ' + $1);
+          }, (int32_t)opcode, (int32_t)n);
         }
       } else {
         EM_ASM({

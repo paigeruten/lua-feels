@@ -32,7 +32,7 @@ diff -u original-src/lua.h src/lua.h
  #define LUA_VERSION_MINOR	"4"
 diff -u original-src/lvm.c src/lvm.c
 --- original-src/lvm.c	2020-04-12 21:11:37.088992932 -0600
-+++ src/lvm.c	2020-04-21 22:02:18.334365880 -0600
++++ src/lvm.c	2020-04-25 17:27:36.706101953 -0600
 @@ -30,6 +30,7 @@
  #include "ltm.h"
  #include "lvm.h"
@@ -49,7 +49,7 @@ diff -u original-src/lvm.c src/lvm.c
   tailcall:
    trap = L->hookmask;
    cl = clLvalue(s2v(ci->func));
-@@ -1079,6 +1081,34 @@
+@@ -1079,6 +1081,58 @@
      Instruction i;  /* instruction being executed */
      StkId ra;  /* instruction's A register */
      vmfetch();
@@ -60,7 +60,7 @@ diff -u original-src/lvm.c src/lvm.c
 +        emscripten_sleep(feels_vm_delay);
 +      }
 +      OpCode opcode = GET_OPCODE(i);
-+      if (opcode == OP_ADD) {
++      if (opcode == OP_ADD || opcode == OP_SUB || opcode == OP_MUL) {
 +        TValue *v1 = vRB(i);
 +        TValue *v2 = vRC(i);
 +        if (ttisinteger(v1) && ttisinteger(v2)) {
@@ -73,6 +73,30 @@ diff -u original-src/lvm.c src/lvm.c
 +            lua_event('opcode ' + $0);
 +          }, (int32_t)opcode);
 +        }
++      } else if (opcode == OP_RETURN1) {
++        TValue *v1 = s2v(ra);
++        if (ttisinteger(v1)) {
++          lua_Integer i1 = ivalue(v1);
++          EM_ASM({
++            lua_event('opcode ' + $0 + ' ' + $1);
++          }, (int32_t)opcode, (int32_t)i1);
++        } else {
++          EM_ASM({
++            lua_event('opcode ' + $0);
++          }, (int32_t)opcode);
++        }
++      } else if (opcode == OP_RETURN) {
++        int n = GETARG_B(i) - 1;  /* number of results */
++        if (n > 0 && ttisinteger(s2v(ra))) {
++          lua_Integer i1 = ivalue(s2v(ra));
++          EM_ASM({
++            lua_event('opcode ' + $0 + ' ' + $1 + ' ' + $2);
++          }, (int32_t)opcode, (int32_t)n, (int32_t)i1);
++        } else {
++          EM_ASM({
++            lua_event('opcode ' + $0 + ' ' + $1);
++          }, (int32_t)opcode, (int32_t)n);
++        }
 +      } else {
 +        EM_ASM({
 +          lua_event('opcode ' + $0);
@@ -84,7 +108,7 @@ diff -u original-src/lvm.c src/lvm.c
      lua_assert(base == ci->func + 1);
      lua_assert(base <= L->top && L->top < L->stack + L->stacksize);
      /* invalidate top for instructions not expecting it */
-@@ -1585,6 +1615,7 @@
+@@ -1585,6 +1639,7 @@
            ci->func -= ci->u.l.nextraargs + nparams1;
          L->top = ra + n;  /* set call for 'luaD_poscall' */
          luaD_poscall(L, ci, n);
@@ -92,7 +116,7 @@ diff -u original-src/lvm.c src/lvm.c
          return;
        }
        vmcase(OP_RETURN0) {
-@@ -1599,6 +1630,7 @@
+@@ -1599,6 +1654,7 @@
            while (nres-- > 0)
              setnilvalue(s2v(L->top++));  /* all results are nil */
          }
@@ -100,7 +124,7 @@ diff -u original-src/lvm.c src/lvm.c
          return;
        }
        vmcase(OP_RETURN1) {
-@@ -1618,6 +1650,7 @@
+@@ -1618,6 +1674,7 @@
                setnilvalue(s2v(L->top++));
            }
          }
