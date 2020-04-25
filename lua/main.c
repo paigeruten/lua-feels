@@ -43,7 +43,7 @@ int run_lua(lua_State* L, const char* code) {
   if (status == LUA_OK) {
     int n = lua_gettop(L);
     if (n > 0) {
-      const char* value = lua_tostring(L, lua_gettop(L));
+      const char* value = luaL_tolstring(L, lua_gettop(L), NULL);
       EM_ASM({
         lua_event('result ' + UTF8ToString($0));
       }, value);
