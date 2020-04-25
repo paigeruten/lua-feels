@@ -1,4 +1,5 @@
-let system, synth;
+let system, synth, drum, inst;
+let note_length = 0.06;
 
 const OPCODES = [
   'MOVE',
@@ -230,7 +231,7 @@ let opcode_tally = {};
 lua_listen('lua', function (event) {
   if (event.payload == 'start') {
     startAudio();
-    base_note = recursionGoUp ? 48 : 60;
+    base_note = recursionGoUp ? 36 : 60;
     opcode_tally = {};
   }
 });
@@ -245,10 +246,10 @@ lua_listen('opcode', function (event) {
 
   let opcodeCat = categorizeOpcode(opcode);
   let midiValue = opcodeToNote(opcode) + base_note;
-  synth.triggerAttackRelease(Tone.Midi(midiValue), 0.5, '+0.05');
+  inst.triggerAttackRelease(Tone.Midi(midiValue), note_length);
 
   if (opcodeCat === 'jump') {
-    //if (loopDrum) TODO
+    if (loopDrum) drum.triggerAttackRelease('C2', note_length)
   }
 
   let label = opcode;
@@ -267,7 +268,7 @@ lua_listen('lua', (event) => {
 });
 lua_listen('enter', () => {
   if (initiallyEntered) {
-    //if (callDrum) TODO
+    if (callDrum) drum.triggerAttackRelease('C2', note_length)
   } else {
     initiallyEntered = true;
   }
@@ -291,6 +292,8 @@ onRangeChange(recursionGoUpInputEl, event => {
     recursionGoUpValueEl.textContent = recursionGoUp + ' notes';
   }
 });
+
+lua_listen('change_speed', event => { note_length = Math.max(0.01, event.payload / 1000 * 0.75); });
 
 let loopDrum = true;
 let callDrum = true;
@@ -319,6 +322,7 @@ function startAudio() {
   }
 }
 
+var piano;
 function setup() {
   var canvas = createCanvas(720, 400);
   canvas.parent('p5');
@@ -326,38 +330,93 @@ function setup() {
 
   system = new ParticleSystem(createVector(width / 2, 50));
 
+  drum = new Tone.MembraneSynth({
+    pitchDecay: 0.01,
+    octaves: 10,
+    envelope: {
+      attack: 0.001,
+      decay: 0.3,
+      sustain: 0.001,
+      release: 0.4
+    }
+  }).toMaster();
+
   synth = new Tone.Synth({
     oscillator: {
       type: "fatsawtooth",
-      detune: 0,
-      count: 2
+      detune: 30,
+      count: 1
     },
     envelope: {
-      attack: 0.02,
-      decay: 0.3,
-      sustain: 0,
-      release: 0.2
-    }
+      attack: 0.001,
+      decay: 0.1,
+      sustain: 0.5,
+      release: 0.4
+    }//,
+    //portamento: 0.03
   });
 
-  var freeverb = new Tone.Freeverb();
-  var filter = new Tone.Filter(100, "highpass");
-  var pan = new Tone.Panner(0.5);
+  var freeverb = new Tone.Freeverb(0.6);
+  var filter = new Tone.Filter(200, "highpass");
 
-  synth.chain(filter, freeverb, pan, Tone.Master);
+  synth.chain(
+    //filter,
+    //freeverb,
+    Tone.Master
+  );
+
+  piano = new Tone.Sampler({
+    "A0" : "A0.mp3",
+    "C1" : "C1.mp3",
+    "D#1" : "Ds1.mp3",
+    "F#1" : "Fs1.mp3",
+    "A1" : "A1.mp3",
+    "C2" : "C2.mp3",
+    "D#2" : "Ds2.mp3",
+    "F#2" : "Fs2.mp3",
+    "A2" : "A2.mp3",
+    "C3" : "C3.mp3",
+    "D#3" : "Ds3.mp3",
+    "F#3" : "Fs3.mp3",
+    "A3" : "A3.mp3",
+    "C4" : "C4.mp3",
+    "D#4" : "Ds4.mp3",
+    "F#4" : "Fs4.mp3",
+    "A4" : "A4.mp3",
+    "C5" : "C5.mp3",
+    "D#5" : "Ds5.mp3",
+    "F#5" : "Fs5.mp3",
+    "A5" : "A5.mp3",
+    "C6" : "C6.mp3",
+    "D#6" : "Ds6.mp3",
+    "F#6" : "Fs6.mp3",
+    "A6" : "A6.mp3",
+    "C7" : "C7.mp3",
+    "D#7" : "Ds7.mp3",
+    "F#7" : "Fs7.mp3",
+    "A7" : "A7.mp3",
+    "C8" : "C8.mp3"
+  }, {
+    "release" : 1,
+    "baseUrl" : "./audio/salamander/"
+  }).toMaster();
+
+  inst = synth;
 }
 
-function echoOn() {
+function pianoOn() {
+  inst = piano;
 }
 
-function echoOff() {
+function pianoOff() {
+  inst = synth;
 }
 
-document.getElementById('echo').addEventListener('change', event => {
+document.getElementById('piano').addEventListener('change', event => {
   if (event.currentTarget.checked) {
-    echoOn();
+    pianoOn();
   } else {
-    echoOff();
+    pianoOff();
   }
 });
 

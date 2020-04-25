@@ -24,7 +24,7 @@
       <div id="settings">
         <div id="speed">
           <input type="range" id="speed-input" min="1" max="21" value="10" autocomplete="off" />
-          <label for="speed-input">VM speed: <strong><span id="current-speed">10</span>Hz</strong></label>
+          <label for="speed-input">⏱️ VM speed: <strong><span id="current-speed">10</span>Hz</strong></label>
         </div>
         <div id="examples">
           <br>
@@ -34,16 +34,16 @@
           <button class="example" data-code="function fib(n) if n <= 1 then return 1 else return fib(n-1) + fib(n-2) end end">fibonacci</button>
           <button class="example" data-code="function countdown(n) if n == 0 then print('BLASTOFF!') else print(n .. '...') return countdown(n-1) end end">countdown</button>
           <button class="example" data-code="for i = 1,100 do if i % 15 == 0 then print('FIZZBUZZ') elseif i % 5 == 0 then print('BUZZ') elseif i % 3 == 0 then print('FIZZ') else print(i) end end">fizzbuzz</button>
-          <button class="example" data-code="function binsearch(ary, x) local left = 1 local right = #ary while left <= right do local middle = math.floor((left + right) / 2) if ary[middle] == x then return middle elseif ary[middle] < x then left = middle + 1 else right = middle - 1 end end return nil end">binsearch</button>
+          <button class="example" data-code="function quicksort(t) if #t<2 then return t end local pivot=t[1] local a,b,c={},{},{} for _,v in ipairs(t) do if v<pivot then a[#a+1]=v elseif v>pivot then c[#c+1]=v else b[#b+1]=v end end a=quicksort(a) c=quicksort(c) for _,v in ipairs(b) do a[#a+1]=v end for _,v in ipairs(c) do a[#a+1]=v end return a end">qsort</button>
         </div>
         <div id="music-settings">
           <br>
-          <strong>𝅘𝅥𝅮𝅘𝅥𝅮 Settings 𝅘𝅥𝅮𝅘𝅥𝅮</strong><br>
-          <input type="range" id="recursion-go-up" min="0" max="12" value="0" autocomplete="off" /> Recursion go up: <strong><span id="recursion-go-up-value">Off</span></strong>
+          <strong>🎵 Settings 🎵</strong><br>
+          <input type="range" id="recursion-go-up" min="0" max="12" value="0" autocomplete="off" /> ⏫ Recursion go up: <strong><span id="recursion-go-up-value">Off</span></strong>
           <br>
-          <label><input type="checkbox" id="loop-drum" autocomplete="off" checked> Drumbeat when looping</label><br>
-          <label><input type="checkbox" id="call-drum" autocomplete="off" checked> Drumbeat on function call</label><br>
-          <label><input type="checkbox" id="echo" autocomplete="off"> Echo</label>
+          <label><input type="checkbox" id="loop-drum" autocomplete="off" checked> 🥁 Drumbeat when looping</label><br>
+          <label><input type="checkbox" id="call-drum" autocomplete="off" checked> 🥁 Drumbeat on function call</label><br>
+          <label><input type="checkbox" id="piano" autocomplete="off"> 🎹 Piano</label>
         </div>
       </div>
       </div>

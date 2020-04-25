@@ -27,7 +27,8 @@ var lua_listeners = {
   error: [],
   opcode: [],
   enter: [],
-  leave: []
+  leave: [],
+  change_speed: []
 };
 
 function lua_listen(event_type, handler) {
@@ -79,6 +80,7 @@ var speed = 100;
 function setSpeed(milliseconds) {
   speed = milliseconds;
   Module.ccall("set_vm_delay", 'void', ['number'], [speed]);
+  lua_emit({ type: 'change_speed', payload: speed });
 }
 
 function jumpToBottom() {
