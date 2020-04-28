@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>lua-feels v0 [livecoding edition]</title>
+    <link href="feels-live.css" rel="stylesheet">
+    <script src="js/vendor/p5.min.js"></script>
+    <script src="js/vendor/Tone.js"></script>
+  </head>
+  <body>
+    <div id="p5"></div>
+    <div id="sidebar">
+      <div id="livecode">
+        <div>
+          <div class="line title">lua-feels v0 [livecoding edition]</div>
+        </div>
+        <form id="livecode-form">
+          <!--<label>Silent code:</label>
+          <textarea id="livecode-silent" autocomplete="off" placeholder="Code written here will be run instantly & silently before the noisy code is run."></textarea>-->
+          <label>Code:</label>
+          <textarea id="livecode-noisy" autocomplete="off" placeholder="Write your code here!"></textarea>
+          <div id="output">
+            <label id="output-label">Output:</label>
+            <div id="livecode-output"></div>
+          </div>
+        </form>
+      </div>
+      <div id="settings">
+        <div id="speed">
+          <input type="range" id="speed-input" min="1" max="21" value="10" autocomplete="off" />
+          <label for="speed-input">⏱️ VM speed: <strong><span id="current-speed">10</span>Hz</strong></label>
+        </div>
+        <div id="music-settings">
+          <br>
+          <strong>🎵 Settings 🎵</strong><br>
+          <input type="range" id="recursion-go-up" min="0" max="12" value="0" autocomplete="off" /> ⏫ Recursion go up: <strong><span id="recursion-go-up-value">Off</span></strong>
+          <br>
+          <label><input type="checkbox" id="loop-drum" autocomplete="off" checked> 🥁 Drumbeat when looping</label><br>
+          <label><input type="checkbox" id="call-drum" autocomplete="off" checked> 🥁 Drumbeat on function call</label><br>
+          <label><input type="checkbox" id="piano" autocomplete="off"> 🎹 Piano</label>
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <script src="js/lua-live.js"></script>
+    <script src="js/noisy-particles.js"></script>
+
+    <script src="lua/main.js"></script>
+  </body>
+</html>

@@ -1,13 +1,22 @@
+let lastOutputType = null;
+
 var Module = {
   print: function(text) {
+    outputEl.innerHTML = '';
+    lastOutputType = 'print';
+
     if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
 
     const lineEl = document.createElement('div');
     lineEl.classList.add('line');
+    lineEl.classList.add('fade-out');
     lineEl.textContent = text;
-    outputEl.appendChild(document.createElement('br'));
     outputEl.appendChild(lineEl);
-    jumpToBottom();
+
+    outputParentEl.classList.add('print-flash');
+    setTimeout(() => {
+      outputParentEl.classList.remove('print-flash');
+    }, speed);
   },
   printErr: function(text) {
     if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
@@ -15,9 +24,7 @@ var Module = {
     const lineEl = document.createElement('div');
     lineEl.classList.add('line');
     lineEl.textContent = '[ERROR] ' + text;
-    outputEl.appendChild(document.createElement('br'));
     outputEl.appendChild(lineEl);
-    jumpToBottom();
   }
 };
 
@@ -63,22 +70,52 @@ function lua_event(event) {
   }
 }
 
-var L = null;
+let currentCode = '';
+let lastParsableCode = '';
+let isLooping = false;
+let hadParseError = false;
+let hadError = false;
 
-function repl(code) {
-  lua_emit({ type: 'lua', payload: 'start' });
-  if (!L) {
-    L = Module.ccall("init_lua", 'number', [], []);
+function runLuaScript() {
+  if (currentCode == '') {
+    isLooping = false;
+    lastParsableCode = '';
+    outputEl.innerHTML = '';
+    lastOutputType = null;
+    return;
   }
+
+  hadParseError = false;
+  hadError = false;
+  const code = currentCode;
+
+  lua_emit({ type: 'lua', payload: 'start' });
+  var L = Module.ccall("init_lua", 'number', [], []);
   var cont = Module.ccall("run_lua", 'number', ['number', 'string'], [L, code], { async: true });
   Promise.resolve(cont)
     .then(() => {
-      replFormEl.classList.remove('inactive');
-      replInputEl.focus();
-
       lua_emit({ type: 'lua', payload: 'end' });
+      Module.ccall("free_lua", 'void', ['number'], [L]);
+
+      if (!hadError && lastOutputType == 'error') {
+        outputEl.innerHTML = '';
+        lastOutputType = null;
+      }
+
+      if (hadParseError) {
+        if (lastOutputType == 'error') {
+          lastOutputType = 'parse_error';
+        }
+        currentCode = lastParsableCode;
+        setTimeout(runLuaScript, 0);
+      } else {
+        lastParsableCode = code;
+        setTimeout(runLuaScript, speed);
+      }
     });
 }
+
+lua_listen('parse_error', () => { hadParseError = true; });
 
 var speed = 100;
 function setSpeed(milliseconds) {
@@ -87,110 +124,24 @@ function setSpeed(milliseconds) {
   lua_emit({ type: 'change_speed', payload: speed });
 }
 
-function jumpToBottom() {
-  replEl.scrollTop = replEl.scrollHeight;
-}
+const noisyCodeEl = document.getElementById('livecode-noisy');
+const outputEl = document.getElementById('livecode-output');
+const outputParentEl = document.getElementById('output');
 
-const replEl = document.getElementById('repl');
-const replFormEl = document.getElementById('repl-form');
-const replInputEl = document.getElementById('repl-input');
-const outputEl = document.getElementById('output');
+noisyCodeEl.addEventListener('keyup', event => {
+  currentCode = noisyCodeEl.value;
 
-replEl.addEventListener('mousedown', event => {
-  if (event.target === replEl || event.target === outputEl) {
-    setTimeout(() => replInputEl.focus(), 0);
+  if (!isLooping) {
+    isLooping = true;
+    runLuaScript();
   }
-});
-
-let luaRunning = false;
-lua_listen('lua', event => {
-  if (event.payload === 'start') {
-    luaRunning = true;
-  } else if (event.payload === 'end') {
-    luaRunning = false;
-  }
-});
-
-replFormEl.addEventListener('submit', event => {
-  event.preventDefault();
-
-  if (luaRunning) {
-    console.warn('tried to submit repl form while code is running');
-    return;
-  }
-
-  const code = replInputEl.value;
-
-  const promptEl = document.createElement('span');
-  promptEl.classList.add('prompt');
-  promptEl.textContent = '>> ';
-
-  const codeEl = document.createElement('span');
-  codeEl.classList.add('code');
-  codeEl.textContent = code;
-
-  const lineEl = document.createElement('div');
-  lineEl.classList.add('line');
-  lineEl.appendChild(promptEl);
-  lineEl.appendChild(codeEl);
-
-  outputEl.appendChild(document.createElement('br'));
-  outputEl.appendChild(lineEl);
-  jumpToBottom();
-
-  replFormEl.classList.add('inactive');
-  replInputEl.value = '';
-
-  replHistory.push(code);
-  replHistoryIndex = replHistory.length;
-
-  repl(code);
-});
-
-var replHistory = [];
-var replHistoryIndex = 0;
-
-replInputEl.addEventListener('keydown', event => {
-  if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-    event.preventDefault();
-
-    if (event.key === 'ArrowUp') {
-      replHistoryIndex--;
-    } else {
-      replHistoryIndex++;
-    }
-
-    if (replHistoryIndex < 0) {
-      replHistoryIndex = 0;
-    } else if (replHistoryIndex >= replHistory.length) {
-      replHistoryIndex = replHistory.length;
-      replInputEl.value = '';
-    } else {
-      replInputEl.value = replHistory[replHistoryIndex];
-    }
-  }
-});
-
-lua_listen('result', event => {
-  const resultPromptEl = document.createElement('span');
-  resultPromptEl.classList.add('result-prompt');
-  resultPromptEl.textContent = '=> ';
-
-  const resultEl = document.createElement('span');
-  resultEl.classList.add('result');
-  resultEl.textContent = event.payload;
-
-  const lineEl = document.createElement('div');
-  lineEl.classList.add('line');
-  lineEl.appendChild(resultPromptEl);
-  lineEl.appendChild(resultEl);
-
-  outputEl.appendChild(document.createElement('br'));
-  outputEl.appendChild(lineEl);
-  jumpToBottom();
 });
 
 lua_listen('error', event => {
+  outputEl.innerHTML = '';
+  lastOutputType = 'error';
+  hadError = true;
+
   const errorEl = document.createElement('span');
   errorEl.classList.add('error');
   errorEl.textContent = event.payload;
@@ -199,9 +150,7 @@ lua_listen('error', event => {
   lineEl.classList.add('line');
   lineEl.appendChild(errorEl);
 
-  outputEl.appendChild(document.createElement('br'));
   outputEl.appendChild(lineEl);
-  jumpToBottom();
 });
 
 // https://stackoverflow.com/a/37623959
@@ -226,15 +175,4 @@ onRangeChange(speedInputEl, event => {
 
     currentSpeedEl.textContent = speed;
   }
-});
-
-const exampleClickHandler = event => {
-  replInputEl.value = event.currentTarget.dataset.code;
-  setTimeout(() => replInputEl.focus(), 0);
-};
-
-const examplesEl = document.getElementById('examples');
-const exampleElements = examplesEl.getElementsByClassName('example');
-Array.prototype.forEach.call(exampleElements, example => {
-  example.addEventListener('click', exampleClickHandler);
 });

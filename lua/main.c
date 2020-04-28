@@ -57,6 +57,10 @@ int run_lua(lua_State* L, const char* code) {
     status = lua_pcall(L, 0, LUA_MULTRET, 1);
 
     lua_remove(L, 1);  /* remove message handler from the stack */
+  } else {
+    EM_ASM({
+      lua_event('parse_error');
+    });
   }
 
   if (status == LUA_OK) {

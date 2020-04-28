@@ -1,0 +1,139 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  display: flex;
+}
+
+#p5 {
+  width: 60%;
+  height: 100%;
+}
+
+#sidebar {
+  width: 40%;
+  height: 100%;
+}
+
+#livecode {
+  height: 75%;
+  padding: 1em;
+  background-color: black;
+  font-family: monospace;
+  font-size: 12pt;
+  color: white;
+}
+
+#settings {
+  height: 25%;
+  padding: 1em;
+  background-color: #2a222d;
+  color: white;
+}
+
+#livecode-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+#livecode-form label {
+  display: block;
+  margin-top: 1em;
+}
+
+#livecode-silent, #livecode-noisy {
+  flex: 1;
+  width: 100%;
+  border: 2px solid white;
+  background: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  outline: none;
+  padding: 5px;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+#livecode-output {
+  flex: 0.5;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 3em;
+  border: 2px double #cac;
+  padding: 5px;
+  margin-bottom: 1em;
+  font-size: 20pt;
+  overflow: auto;
+}
+
+#output-label {
+  color: #cac;
+}
+
+.print-flash #livecode-output {
+  border-color: #f4f;
+  border-width: 3px;
+  font-weight: bold;
+}
+
+.print-flash #output-label {
+  color: #f4f;
+  font-weight: bold;
+}
+
+.print-flash #livecode-output {
+  padding: 4px;
+}
+
+.line {
+  display: inline;
+  white-space: pre-wrap;
+}
+
+.result-prompt {
+  color: #6c6;
+}
+
+.result {
+  white-space: pre-wrap;
+}
+
+.error {
+  color: red;
+  font-size: 10pt;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.fade-out {
+  animation: fadeOut ease 2s forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
