@@ -162,6 +162,7 @@ function categorizeOpcode(opcode) {
     case 'JMP':
     case 'FORLOOP':
     case 'TFORLOOP':
+    case 'TFORCALL':
       return 'jump';
 
     case 'MMBIN':
@@ -169,7 +170,6 @@ function categorizeOpcode(opcode) {
     case 'MMBINK':
     case 'CALL':
     case 'TAILCALL':
-    case 'TFORCALL':
       return 'call';
 
     case 'RETURN':
@@ -352,6 +352,7 @@ function setup() {
       release: 0.4
     }
   }).toMaster();
+  drum.volume.value = -10;
 
   synth = new Tone.Synth({
     oscillator: {
@@ -367,6 +368,7 @@ function setup() {
     }//,
     //portamento: 0.03
   });
+  synth.volume.value = -10;
 
   var freeverb = new Tone.Freeverb(0.6);
   var filter = new Tone.Filter(200, "highpass");
