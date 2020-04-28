@@ -6,7 +6,8 @@ This is a spinoff of https://github.com/paileyq/feels that will let you run a Lu
 
 ## Live demo
 
-https://paileyq.github.io/lua-feels/feels.html
+* REPL edition: https://paileyq.github.io/lua-feels/feels.html
+* Livecoding edition: https://paileyq.github.io/lua-feels/feels-live.html
 
 ## Usage
 
