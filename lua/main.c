@@ -22,6 +22,20 @@ void set_vm_delay(unsigned int milliseconds) {
   feels_vm_delay = milliseconds;
 }
 
+static int msghandler (lua_State *L) {
+  const char *msg = lua_tostring(L, 1);
+  if (msg == NULL) {  /* is error object not a string? */
+    if (luaL_callmeta(L, 1, "__tostring") &&  /* does it have a metamethod */
+        lua_type(L, -1) == LUA_TSTRING)  /* that produces a string? */
+      return 1;  /* that is the message */
+    else
+      msg = lua_pushfstring(L, "(error object is a %s value)",
+                               luaL_typename(L, 1));
+  }
+  luaL_traceback(L, L, msg, 1);  /* append a standard traceback */
+  return 1;  /* return the traceback */
+}
+
 int run_lua(lua_State* L, const char* code) {
   feels_opcode_count = 0;
 
@@ -37,7 +51,12 @@ int run_lua(lua_State* L, const char* code) {
   }
 
   if (status == LUA_OK) {
+    lua_pushcfunction(L, msghandler);  /* push message handler */
+    lua_insert(L, 1);  /* put it under function and args */
+
     status = lua_pcall(L, 0, LUA_MULTRET, 1);
+
+    lua_remove(L, 1);  /* remove message handler from the stack */
   }
 
   if (status == LUA_OK) {
