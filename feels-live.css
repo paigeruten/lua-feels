@@ -35,6 +35,7 @@ body {
   padding: 1em;
   background-color: #2a222d;
   color: white;
+  font-size: 10pt;
 }
 
 #livecode-form {

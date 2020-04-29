@@ -305,6 +305,23 @@ onRangeChange(recursionGoUpInputEl, event => {
   }
 });
 
+function setVolume(volumeLevel) {
+  var volume = (volumeLevel - 9) * 5;
+  drum.volume.value = volume;
+  synth.volume.value = volume;
+  piano.volume.value = volume + 5;
+}
+
+const volumeInputEl = document.getElementById('volume');
+const volumeValueEl = document.getElementById('volume-value');
+
+onRangeChange(volumeInputEl, event => {
+  var volumeLevel = parseInt(event.currentTarget.value);
+  volumeValueEl.textContent = volumeLevel;
+
+  setVolume(volumeLevel);
+});
+
 lua_listen('change_speed', event => { note_length = Math.max(0.01, event.payload / 1000 * 0.75); });
 
 let loopDrum = true;
@@ -352,7 +369,6 @@ function setup() {
       release: 0.4
     }
   }).toMaster();
-  drum.volume.value = -10;
 
   synth = new Tone.Synth({
     oscillator: {
@@ -368,7 +384,6 @@ function setup() {
     }//,
     //portamento: 0.03
   });
-  synth.volume.value = -10;
 
   var freeverb = new Tone.Freeverb(0.6);
   var filter = new Tone.Filter(200, "highpass");
@@ -414,6 +429,8 @@ function setup() {
     "release" : 1,
     "baseUrl" : "./audio/salamander/"
   }).toMaster();
+
+  setVolume(5);
 
   inst = synth;
 }
