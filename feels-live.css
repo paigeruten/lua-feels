@@ -11,6 +11,10 @@ body {
   display: flex;
 }
 
+a {
+  color: #bbf;
+}
+
 #p5 {
   width: 60%;
   height: 100%;
