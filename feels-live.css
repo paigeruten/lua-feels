@@ -22,7 +22,7 @@ body {
 }
 
 #livecode {
-  height: 75%;
+  height: 70%;
   padding: 1em;
   background-color: black;
   font-family: monospace;
@@ -31,7 +31,7 @@ body {
 }
 
 #settings {
-  height: 25%;
+  height: 30%;
   padding: 1em;
   background-color: #2a222d;
   color: white;
