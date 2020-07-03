@@ -18,3 +18,8 @@ Pre-requisites: `emscripten`, `make` (if you aren't editing the C code, these ar
 1. `cd lua/` and run `make`.
 2. Open `feels.html` in your browser (you will probably need to run a local http server).
 3. Type Lua code into REPL, and see nice sights and hear nice sounds in your browser as the code executes. :D
+
+## State of this project
+
+It's a toy and I'm probably abandoning it for now. It's all yours. One day I'd like to create a comprehensive live visualization of all aspects of Lua's internals (parsing, codegen, VM, stack, GC, etc.) as it runs your code, but we'll see if that day comes.
+
