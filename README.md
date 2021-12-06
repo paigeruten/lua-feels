@@ -8,8 +8,8 @@ This is a spinoff of https://github.com/paileyq/feels that will let you run a Lu
 
 ## Live demo
 
-* REPL edition: https://paileyq.github.io/lua-feels/feels.html
-* Livecoding edition: https://paileyq.github.io/lua-feels/feels-live.html
+* REPL edition: https://paigeruten.github.io/lua-feels/feels.html
+* Livecoding edition: https://paigeruten.github.io/lua-feels/feels-live.html
 
 ## Usage
 
