@@ -16,7 +16,6 @@
 
 #include "luaconf.h"
 
-extern unsigned int feels_vm_delay;
 extern int feels_opcode_count;
 
 #define LUA_VERSION_MAJOR	"5"

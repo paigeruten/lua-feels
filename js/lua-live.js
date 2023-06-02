@@ -120,7 +120,6 @@ lua_listen('parse_error', () => { hadParseError = true; });
 var speed = 100;
 function setSpeed(milliseconds) {
   speed = milliseconds;
-  Module.ccall("set_vm_delay", 'void', ['number'], [speed]);
   lua_emit({ type: 'change_speed', payload: speed });
 }
 

@@ -5,7 +5,6 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
-unsigned int feels_vm_delay = 100;
 int feels_opcode_count = 0;
 
 lua_State* init_lua() {
@@ -16,10 +15,6 @@ lua_State* init_lua() {
 
 void free_lua(lua_State* L) {
   lua_close(L);
-}
-
-void set_vm_delay(unsigned int milliseconds) {
-  feels_vm_delay = milliseconds;
 }
 
 static int msghandler (lua_State *L) {
